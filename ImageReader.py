@@ -43,4 +43,4 @@ def imgRead(loc):
 # out_file.write(data)
 # out_file.close()
 
-imgRead(first)
+imgRead("first001.rgb")

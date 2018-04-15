@@ -1,17 +1,27 @@
-# import os
-# import sys
-# from ImageReader import imgRead
-# from PIL import Image
-# import glob
-# from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
-# from PyQt5.QtCore import pyqtSlot, QTimeLine,
-#
-# Images = [] #list of image filenames
+import os
+import sys
+from ImageReader import imgRead
+from PIL import Image
+import glob
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
+from PyQt5.QtCore import pyqtSlot, QTimeLine
+from tkinter import Tk, PhotoImage, Button, FLAT
+
+Images = [] #list of image filenames
 # StartFrame = 0
-# dirFiles = os.listdir('/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/first') #list of directory files
+dirFiles = os.listdir('/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/first') #list of directory files
 # # print()
-# dirFiles.sort() #good initial sort but doesnt sort numerically very well
-# # tifCounter = len(glob.glob1('/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/first',"*.rgb"))
+dirFiles.sort() #good initial sort but doesnt sort numerically very well
+CartridgeCounter = len(glob.glob1('/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/first',"*.rgb"))
+
+count = 0
+for files in dirFiles:  # filter out all non jpgs
+    #     # print(files.title())
+    if '.rgb' in files:
+        Images[count] = imgRead(files.title())  # this isnt matching data type
+        count += 1
+# self.ImageSequencer()
+
 # # print(tifCounter)
 #
 #   ###maybe add a return flag here to say all the images are obtained and play can be considered functional after this
@@ -70,7 +80,7 @@
 # timeLine = QtCore.QTimeLine()
 # QtCore.QTimeLine.setFrameRange(timeLine,StartFrame,150)
 
-from tkinter import Tk, PhotoImage, Button, FLAT
+
 root = Tk()
 mineImagesList = [PhotoImage(file="Resources/Mine/saperx_mine_%s.png" % (frame)) for frame in range(1, 11)]
 button = Button(root, bd=0, relief=FLAT, command= lambda: func(button))
