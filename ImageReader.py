@@ -1,8 +1,9 @@
-from PIL import Image, ImageQt
+from PIL import Image
 
 
 def imgRead(loc):
     in_file = open("/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/first/"+loc, "rb") # opening for [r]eading as [b]inary
+    # print(loc)
     data = in_file.read() # if you only wanted to read 512 bytes, do .read(512)
     # print(data.__len__())
     img = Image.new('RGB',(352,288),'white')
@@ -31,8 +32,8 @@ def imgRead(loc):
     #         print("%s %s"%(pixels[x,y],(y+1)))
     #         ind+1
     in_file.close()
-    # return img
-    img.show()
+    return img
+    # img.show()
 
 #remove the lines below after you have integrated the function above with the class you want
 # send_address_here="first003.rgb"
@@ -43,4 +44,4 @@ def imgRead(loc):
 # out_file.write(data)
 # out_file.close()
 
-imgRead("first001.rgb")
+# imgRead("first001.rgb")

@@ -1,25 +1,40 @@
 import os
-import sys
+from PIL import Image, ImageTk
 from ImageReader import imgRead
-from PIL import Image
+import time
 import glob
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
-from PyQt5.QtCore import pyqtSlot, QTimeLine
-from tkinter import Tk, PhotoImage, Button, FLAT
+from tkinter import Tk, Canvas #Tk, PhotoImage, Button, FLAT
 
+root = Tk()
+root.title("Media Player")
+canvas=Canvas(root, height=600, width=1000)
 Images = [] #list of image filenames
+Images.append(Image.new('RGB',(352,288),'white'))
+basewidth = 150
+wpercent = (basewidth / float(Images[0].size[0]))
+hsize = int((float(Images[0].size[0]) * float(wpercent)))
 # StartFrame = 0
 dirFiles = os.listdir('/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/first') #list of directory files
 # # print()
 dirFiles.sort() #good initial sort but doesnt sort numerically very well
 CartridgeCounter = len(glob.glob1('/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/first',"*.rgb"))
 
-count = 0
+count = 1
 for files in dirFiles:  # filter out all non jpgs
-    #     # print(files.title())
+    # print(files.title())
     if '.rgb' in files:
-        Images[count] = imgRead(files.title())  # this isnt matching data type
+        Images.append(ImageTk.PhotoImage(imgRead(files.title())))
         count += 1
+print("fames are to be displayed soon")
+for num in range (1, count):
+    # print("reached")
+    canvas.create_image(100, 80, image=Images[num])
+    print(num)
+    canvas.pack()
+    root.mainloop()
+
+print("end")
+         # self.ImageSequencer()
 # self.ImageSequencer()
 
 # # print(tifCounter)
@@ -80,19 +95,19 @@ for files in dirFiles:  # filter out all non jpgs
 # timeLine = QtCore.QTimeLine()
 # QtCore.QTimeLine.setFrameRange(timeLine,StartFrame,150)
 
-
-root = Tk()
-mineImagesList = [PhotoImage(file="Resources/Mine/saperx_mine_%s.png" % (frame)) for frame in range(1, 11)]
-button = Button(root, bd=0, relief=FLAT, command= lambda: func(button))
-
-
-def func (object, frame=0):
-    object.configure(image=mineImagesList[frame])
-    object.image = mineImagesList[frame]
-    print("Object image:", object.image)
-    if frame+1 < len(mineImagesList):
-        frame += 1
-        root.after(34, lambda frame=frame, object=object: func(object=object, frame=frame))
-
-button.pack()
-root.mainloop()
+#
+#
+# mineImagesList = [PhotoImage(file="Resources/Mine/saperx_mine_%s.png" % (frame)) for frame in range(1, 11)]
+# button = Button(root, bd=0, relief=FLAT, command= lambda: func(button))
+#
+#
+# def func (object, frame=0):
+#     object.configure(image=mineImagesList[frame])
+#     object.image = mineImagesList[frame]
+#     print("Object image:", object.image)
+#     if frame+1 < len(mineImagesList):
+#         frame += 1
+#         root.after(34, lambda frame=frame, object=object: func(object=object, frame=frame))
+#
+# button.pack()
+# root.mainloop()
