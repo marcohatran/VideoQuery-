@@ -1,38 +1,47 @@
 import os
-from PIL import Image, ImageTk
+from PIL import ImageTk
 from ImageReader import imgRead
-import time
 import glob
-from tkinter import Tk, Canvas #Tk, PhotoImage, Button, FLAT
+import tkinter as tk
 
-root = Tk()
+root = tk.Tk()
 root.title("Media Player")
-canvas=Canvas(root, height=600, width=1000)
+label1 = tk.Label(root)
+count=0
+c=0
 Images = [] #list of image filenames
-Images.append(Image.new('RGB',(352,288),'white'))
-basewidth = 150
-wpercent = (basewidth / float(Images[0].size[0]))
-hsize = int((float(Images[0].size[0]) * float(wpercent)))
-# StartFrame = 0
 dirFiles = os.listdir('/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/first') #list of directory files
-# # print()
-dirFiles.sort() #good initial sort but doesnt sort numerically very well
-CartridgeCounter = len(glob.glob1('/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/first',"*.rgb"))
+dirFiles.sort()
 
-count = 1
-for files in dirFiles:  # filter out all non jpgs
-    # print(files.title())
-    if '.rgb' in files:
-        Images.append(ImageTk.PhotoImage(imgRead(files.title())))
-        count += 1
-print("fames are to be displayed soon")
-for num in range (1, count):
+def fillImageArr():
+    global count
+    for files in dirFiles:  # filter out all non jpgs
+        # print(files.title())
+        if '.rgb' in files:
+            Images.append(ImageTk.PhotoImage(imgRead(files.title())))
+            count += 1
+
+def showLabel1(label1):
+    def showLabel():
+        global c
+        global count
+        if c!=count:
+            label1.config(image = Images[c])
+            label1.image = Images[c]
+            label1.after(4000, showLabel1)
+        else:
+            label1.destroy()
+    showLabel()
     # print("reached")
-    canvas.create_image(100, 80, image=Images[num])
-    print(num)
-    canvas.pack()
-    root.mainloop()
+    # canvas.create_image(100, 80, image=Images[num])
+    # print(num)
+    # canvas.pack()
 
+fillImageArr()
+print("fames are to be displayed soon")
+label1.pack()
+showLabel1(label1)
+root.mainloop()
 print("end")
          # self.ImageSequencer()
 # self.ImageSequencer()
