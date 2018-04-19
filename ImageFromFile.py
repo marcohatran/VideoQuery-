@@ -11,7 +11,10 @@ root.minsize(width=500, height = 500)
 count=0
 c=0
 loc = '/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/first'
-
+QPlayB = Button(root, text = "Play")
+QPlayB.place(x = 200, y= 374)
+QPausB = Button(root, text = "Pause" )
+QPausB.place(x = 185, y= 374)
 def QLocSet(dirAddress):
     global loc
     loc = dirAddress
@@ -50,11 +53,13 @@ print("fames are to be displayed soon")
 def callback(e):
     global c
     global count
-    if c>count:
+    global label1
+    if c==count:
         c=0
     # print("counter methed %s",c)
-    PlayLabel = Label(root, image=Images[c])
-    PlayLabel.place(x=20,y=20)
+    label1.destroy()
+    label1 = Label(root, image=Images[c])
+    label1.place(x=20,y=20)
     c+= 1
     # PlayLabel.pack()
 # # # print("reached end")
