@@ -1,16 +1,23 @@
 import os
-from PIL import ImageTk
+from PIL import ImageTk, Image
 from ImageReader import imgRead
-import glob
-import tkinter as tk
+from tkinter import Tk, Frame, Label, PhotoImage, Button
+import time
 
-root = tk.Tk()
+root = Tk()
+# frame = Frame(root)
 root.title("Media Player")
-label1 = tk.Label(root)
+root.minsize(width=500, height = 500)
 count=0
 c=0
+loc = '/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/first'
+
+def QLocSet(dirAddress):
+    global loc
+    loc = dirAddress
+
 Images = [] #list of image filenames
-dirFiles = os.listdir('/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/first') #list of directory files
+dirFiles = os.listdir(loc) #list of directory files
 dirFiles.sort()
 
 def fillImageArr():
@@ -20,29 +27,41 @@ def fillImageArr():
         if '.rgb' in files:
             Images.append(ImageTk.PhotoImage(imgRead(files.title())))
             count += 1
+    #might want to take a return statement on the number of count to determine how many frames to display per audio packet
 
-def showLabel1(label1):
-    def showLabel():
-        global c
-        global count
-        if c!=count:
-            label1.config(image = Images[c])
-            label1.image = Images[c]
-            label1.after(4000, showLabel1)
-        else:
-            label1.destroy()
-    showLabel()
+def showLabel1(c):
+    # global count
+    # while (c<count):
+    labelref = Label(root, image=Images[0])
+    return labelref
+        # c+=1
+        # label1.after(4000, showLabel1)
+    # label1.destroy()
     # print("reached")
     # canvas.create_image(100, 80, image=Images[num])
     # print(num)
     # canvas.pack()
 
 fillImageArr()
+label1 = Label(root, image=Images[0]) #blank label
+label1.place(x=20,y=20)
 print("fames are to be displayed soon")
-label1.pack()
-showLabel1(label1)
+
+def callback(e):
+    global c
+    global count
+    if c>count:
+        c=0
+    # print("counter methed %s",c)
+    PlayLabel = Label(root, image=Images[c])
+    PlayLabel.place(x=20,y=20)
+    c+= 1
+    # PlayLabel.pack()
+# # # print("reached end")
+# #     root.bind()
+root.bind("<Return>", callback)
 root.mainloop()
-print("end")
+# print("end")
          # self.ImageSequencer()
 # self.ImageSequencer()
 
