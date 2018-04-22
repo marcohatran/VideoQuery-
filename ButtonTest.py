@@ -11,7 +11,9 @@ class Example(tk.Frame):
     # Set vid params
     count = 0
     c = 0
-    loc = "/Users/baltz/Desktop/project_576/query/first"
+    loc = "/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/first/"
+    # /Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/first/
+    # /Users/baltz/Desktop/project_576/query/first
     Images = []  # list of image filenames
     dirFiles = os.listdir(loc)  # list of directory files
     dirFiles.sort()
@@ -43,7 +45,8 @@ class Example(tk.Frame):
         # and a button to do the computation
         #self.prompt = tk.Label(self, text="Enter a number:", anchor="w")
         #self.entry = tk.Entry(self)
-        self.play = tk.Button(self, text="Play", command = self.playPause)
+        self.play = tk.Button(self, text="Play")# command = self.playPause)
+        self.play.bind("<ButtonPress-1>",self.playAduio)
         #self.submitL = tk.Button(self, text="Pause", command=self.pause)
         self.output = tk.Label(self, text="Paused")
 
@@ -65,12 +68,14 @@ class Example(tk.Frame):
             self.output.configure(text = "Paused")
             self.play.configure(text = "Play")
 
-    def playAduio(self):
+    def playAduio(self, widget, data=None):
         # define stream chunk
         chunk = 1024
 
         # open a wav format music
-        f = wave.open("/Users/baltz/Desktop/project_576/query/" + Example.query, "rb")
+        f = wave.open("/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/" + Example.query, "rb")
+        # /Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/
+        # /Users/baltz/Desktop/project_576/query/
         print(f.getnframes())
         print("Frame Rate: ", f.getframerate())
 
@@ -87,9 +92,8 @@ class Example(tk.Frame):
         while data:
             stream.write(data)
             data = f.readframes(chunk)
-
             #update video
-            self.callback
+            self.callback()
 
         # stop stream
         stream.stop_stream()
@@ -103,6 +107,8 @@ class Example(tk.Frame):
         self.output.configure(text="Paused")
         Example.playBool = False
 
+    def donothing(self):
+        print("chilling")
     def first(self):
         Example.query = "first/first.wav"
 
@@ -120,17 +126,13 @@ class Example(tk.Frame):
 
 
     def callback(self):
-        global c
-        global count
-        global label1
-        if c == count:
-            c = 0
+        if self.c == self.count:
+            self.c = 0
         # print("counter methed %s",c)
         self.label1.destroy()
-        self.label1 = tk.Label(root, image=tk.Images[c])
+        self.label1 = tk.Label(root, image=self.Images[self.c])
         self.label1.place(x=20, y=20)
-        c += 1
-
+        self.c += 1
 
 
     def calculate(self):
@@ -152,5 +154,6 @@ class Example(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
-    Example(root).pack(fill="both", expand=True)
-    root.mainloop()
+    while True:
+        Example(root).pack(fill="both", expand=True)
+        root.mainloop()

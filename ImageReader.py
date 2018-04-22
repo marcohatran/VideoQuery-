@@ -1,12 +1,13 @@
 from PIL import Image
 
+img = Image.new('RGB',(352,288),'white')
 
 def imgRead(loc):
-    in_file = open("/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/first/"+loc, "rb") # opening for [r]eading as [b]inary
+    in_file = open(loc, "rb") # opening for [r]eading as [b]inary
     # print(loc)
     data = in_file.read() # if you only wanted to read 512 bytes, do .read(512)
     # print(data.__len__())
-    img = Image.new('RGB',(352,288),'white')
+    global img
     # img.show()
     pixels = img.load()
     # pixels[351,100]=(1,177,177)

@@ -14,7 +14,9 @@ loc = '/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/firs
 QPlayB = Button(root, text = "Play")
 QPlayB.place(x = 200, y= 374)
 QPausB = Button(root, text = "Pause" )
-QPausB.place(x = 185, y= 374)
+QPausB.place(x = 100, y= 374)
+QPlayF=0
+
 def QLocSet(dirAddress):
     global loc
     loc = dirAddress
@@ -66,7 +68,7 @@ def callback(e):
 # #     root.bind()
 root.bind("<Return>", callback)
 root.mainloop()
-# print("end")
+print("end")
          # self.ImageSequencer()
 # self.ImageSequencer()
 
