@@ -35,8 +35,12 @@ class MakeAviData:
                         self.MakePngFromRgb(collection_files)
 
     def MakeAviFromPng(self, dir_path):
+        img_basic_name = ''
+        for folders in os.listdir(dir_path):
+            if '.rgb' in folders:
+                img_basic_name = folders.title()[:-7]
         basic_name = os.path.basename(os.path.dirname(dir_path))
-        img_name = dir_path+basic_name
+        img_name = dir_path+img_basic_name
         wav_name = dir_path+basic_name+'.wav'
         avi_name = dir_path+basic_name+'.avi'
         subprocess.call(['ffmpeg', '-framerate', '30',
