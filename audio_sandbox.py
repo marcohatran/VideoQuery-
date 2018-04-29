@@ -31,6 +31,9 @@ f2audio = wave.open(f2,'rb')
 # print(f2audio.getnframes())
 y2, sr2 = librosa.load(f2)
 print(np.size(y2))
+print(np.size(sr2))
+print(y2)
+print(sr2)
 load = np.empty((110592,))
 load2 = np.empty((110592,))
 for i in range(0,110592):
@@ -38,7 +41,7 @@ for i in range(0,110592):
 for i in range(110592, 221184):
     load2[i-110592] = y2[i]
 chromacomp = librosa.feature.rmse(y=load)
-print(chromacomp)
+# print(chromacomp)
 chromacomp2 = librosa.feature.rmse(y=load2)
 final = scipy.spatial.distance.euclidean(chromacomp, chroma1)
 final2 = scipy.spatial.distance.euclidean(chromacomp2, chroma1)
