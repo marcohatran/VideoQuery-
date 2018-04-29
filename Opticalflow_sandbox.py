@@ -35,6 +35,7 @@ class MotionVectorsFromFiles:
         avi_name = dir_path + basic_name + '.avi'
         print(avi_name)
         cap = cv2.VideoCapture(avi_name)
+        backup_frame = cv2.VideoCapture('sample.avi')
         # params for ShiTomasi corner detection
         feature_params = dict(maxCorners=100,
                               qualityLevel=0.3,
@@ -60,6 +61,12 @@ class MotionVectorsFromFiles:
                 break
             frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             # calculate optical flow
+            if p0 is None:
+                print('maybe it started here')
+                ret, old_frame = backup_frame.read()
+                old_gray = cv2.cvtColor(old_frame, cv2.COLOR_BGR2GRAY)
+                p0 = cv2.goodFeaturesToTrack(old_gray, mask=None, **feature_params)
+                frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             p1, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0, None, **lk_params)
             # Select good points
             if p1 is None:
@@ -81,9 +88,7 @@ class MotionVectorsFromFiles:
                 break
             # Now update the previous frame and previous points
             old_gray = frame_gray.copy()
-            p0 = good_new.reshape(-1, 1, 2)
-            if (timer%30):
-                p0 = cv2.goodFeaturesToTrack(old_gray, mask=None, **feature_params)
+            p0 = cv2.goodFeaturesToTrack(old_gray, mask=None, **feature_params)
             timer +=1
             print(timer)
         cv2.destroyAllWindows()
