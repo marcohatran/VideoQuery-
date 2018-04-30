@@ -12,10 +12,11 @@ QueryAd = "/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/
 query_ad = "/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/second/secondHist.csv"
 database_ad = "/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/databse_videos/sports"
 
-img_ref = cv2.imread("/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/second/second001.png")
+img_ref = cv2.imread("/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/second/second002.png")
 rarray = np.empty((256,1))
 garray = np.empty((256,1))
 barray = cv2.calcHist([img_ref], [1], None, [256], [0,256])
+print(np.shape(barray))
 barray2 = np.empty((256,1), float)
 arr1 = np.empty([])
 
