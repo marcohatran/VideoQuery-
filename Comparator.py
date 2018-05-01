@@ -4,7 +4,7 @@ import csv
 import os
 import scipy.spatial.distance
 import scipy.stats
-
+import librosa
 
 class ExtractAllMetrics:
     # made a default address here.
@@ -26,6 +26,10 @@ class ExtractAllMetrics:
 
     Q_A_Array = []
     D_A_Array = []
+
+    Q_M_Array = []
+    D_M_Array = []
+    min = 999
     # print(ref_array, np.count_nonzero(ref_array))
     # print(Q_B_Array[0], np.size(Q_B_Array[0]),np.count_nonzero(Q_B_Array[0]))
     Image_Correlations = ["/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/databse_videos/flowers/",
@@ -44,8 +48,12 @@ class ExtractAllMetrics:
         print('starting a pyclass')
         # self.q_extract_hist(self.Query_path)
         # self.compare_hist()
-        self.q_extract_audio(self.Query_path)
-        self.compare_audio()
+        # self.q_extract_audio(self.Query_path)
+        # self.compare_audio()
+        # print(self.min)
+        self.q_extract_motionvectors(self.Query_path)
+        self.compare_motionvectors()
+        print(self.min)
         # print(self.Q_B_Array, self.Q_B, self.D_B_Array, self.D_B)
 
     def q_extract_hist(self, Q_dir_path):
@@ -104,7 +112,7 @@ class ExtractAllMetrics:
         for (line, address) in enumerate(self.Image_Correlations):
             self.load_hist(address)
             # print(D_B_Array,'\n',ref_array)
-            for offset in range (0, 450, 20):
+            for offset in range (0, 450, 2):
                 cumulative_correlation = 0.000
                 for i in range (0,150):
                     # self.transformations(i, offset)
@@ -163,16 +171,80 @@ class ExtractAllMetrics:
 
     def compare_audio(self):
         for (line, address) in enumerate(self.Image_Correlations):
+            self.D_A_Array = []
             self.load_audio(address)
-            for offset in range(0, self.D_A_Array.__len__()-self.Q_A_Array.__len__(), 20000):
-                cumulative_correlation = 0.000
+            for offset in range(0, (self.D_A_Array.__len__()-self.Q_A_Array.__len__()), 20000):
                 # print(self.D_A_Array.__len__()-self.Q_A_Array.__len__())
                 db_audio_array =[]
                 for i in range(0, self.Q_A_Array.__len__()):
                     db_audio_array.append(self.D_A_Array[offset+i])
-                # print(db_audio_array)
-                c = scipy.spatial.distance.euclidean(np.array(self.Q_A_Array), np.array(db_audio_array))
+                # print(db_audio_array.__len__())
+                load1 = np.asarray(self.Q_A_Array)
+                np.resize(load1,(load1.__len__(),1))
+                load2 = np.asarray(db_audio_array)
+                np.resize(load2, (load2.__len__(), 1))
+                chroma1 = librosa.feature.rmse(y=load1)
+                chroma2 = librosa.feature.rmse(y=load2)
+                # print(np.size(chroma2),np.size(chroma1))
+                # print(chroma1,chroma2)
+                # c = scipy.stats.pearsonr(np.array(self.Q_A_Array), np.array(db_audio_array))
+                c = scipy.spatial.distance.euclidean(chroma1,chroma2)
                 cumulative_correlation = c
                 print(cumulative_correlation)
+                if self.min>cumulative_correlation:
+                    self.min = cumulative_correlation
+
+
+    def q_extract_motionvectors(self, Q_dir_path):
+        print(Q_dir_path)
+        # extracting audio data from given queries
+        for file in os.listdir(Q_dir_path):
+            if 'MotionVectors.csv' in file:
+                data_file_loc = Q_dir_path + file.title().lower()
+                with open(data_file_loc, 'r') as csv_hist_data:
+                    reader1 = csv.reader(csv_hist_data)
+                    header = next(reader1)
+                    elements = [lines for lines in reader1]
+                    # print(elements[0],np.shape(elements),elements[0][0])
+                    track = 0
+                    # print(np.size(elements), np.shape(elements)[0])
+                    for values in range(0, np.shape(elements)[0]):
+                        self.Q_M_Array.append(float(elements[values][0]))
+                        track += 1
+                    # print(self.Q_M_Array, track)
+
+    def load_motionvectors(self, D_dir_path):
+        print(D_dir_path)
+        for tiles in os.listdir(D_dir_path):
+            if 'MotionVectors.csv' in tiles:
+                data_file_loc = D_dir_path + tiles.title().lower()
+                with open(data_file_loc, 'r') as csv_hist_data:
+                    reader2 = csv.reader(csv_hist_data)
+                    header = next(reader2)
+                    elements = [lines for lines in reader2]
+                    track = 0
+                    for values in range(0, np.shape(elements)[0]):
+                        self.D_M_Array.append(float(elements[values][0]))
+                        track += 1
+                        # zero index corresponds to image 1
+                    # print(self.D_A_Array, track)
+
+
+    def compare_motionvectors(self):
+        for (line, address) in enumerate(self.Image_Correlations):
+            self.D_M_Array = []
+            self.load_motionvectors(address)
+            for offset in range(0, self.D_M_Array.__len__()-self.Q_M_Array.__len__(), 1000):
+                cumulative_correlation = 0.000
+                # print(self.D_A_Array.__len__()-self.Q_A_Array.__len__())
+                db_motion_vector =[]
+                for i in range(0, self.Q_M_Array.__len__()):
+                    db_motion_vector.append(self.D_M_Array[offset+i])
+                # print(db_audio_array)
+                c = scipy.spatial.distance.euclidean(np.array(self.Q_M_Array), np.array(db_motion_vector))
+                cumulative_correlation = c
+                print(cumulative_correlation)
+                if self.min>cumulative_correlation:
+                    self.min = cumulative_correlation
 
 prep = ExtractAllMetrics()
