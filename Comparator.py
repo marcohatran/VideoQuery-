@@ -24,6 +24,8 @@ class ExtractAllMetrics:
     D_G_Array = np.empty((600,256,1))
     D_R_Array = np.empty((600,256,1))
 
+    Q_A_Array = []
+    D_A_Array = []
     # print(ref_array, np.count_nonzero(ref_array))
     # print(Q_B_Array[0], np.size(Q_B_Array[0]),np.count_nonzero(Q_B_Array[0]))
     Image_Correlations = ["/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/databse_videos/flowers/",
@@ -40,8 +42,10 @@ class ExtractAllMetrics:
 
     def __init__(self):
         print('starting a pyclass')
-        self.q_extract_hist(self.Query_path)
-        self.compare_hist()
+        # self.q_extract_hist(self.Query_path)
+        # self.compare_hist()
+        self.q_extract_audio(self.Query_path)
+        self.compare_audio()
         # print(self.Q_B_Array, self.Q_B, self.D_B_Array, self.D_B)
 
     def q_extract_hist(self, Q_dir_path):
@@ -117,5 +121,58 @@ class ExtractAllMetrics:
                 # if cumulative_correlation>=correlation:
                 #     Image_Correlations[line][1] = cumulative_correlation
                 #     Image_Correlations[line][2] = offset
+
+
+    def q_extract_audio(self, Q_dir_path):
+        print(Q_dir_path)
+        # extracting audio data from given queries
+        for file in os.listdir(Q_dir_path):
+            if 'AudioArray.csv' in file:
+                data_file_loc = Q_dir_path + file.title().lower()
+                with open(data_file_loc, 'r') as csv_hist_data:
+                    reader1 = csv.reader(csv_hist_data)
+                    header = next(reader1)
+                    elements = [lines for lines in reader1]
+                    # print(elements[0],np.shape(elements),elements[0][0])
+                    track = 0
+                    # print(np.size(elements), np.shape(elements)[0])
+                    for values in range(0, np.shape(elements)[0]):
+                        # print(i,rest)
+                        # print(float(elements[values][0]))
+                        self.Q_A_Array.append(float(elements[values][0]))
+                        track += 1
+                    # print(self.Q_A_Array, track)
+
+
+    def load_audio(self, D_dir_path):
+        print(D_dir_path)
+        for tiles in os.listdir(D_dir_path):
+            if 'AudioArray.csv' in tiles:
+                data_file_loc = D_dir_path + tiles.title().lower()
+                with open(data_file_loc, 'r') as csv_hist_data:
+                    reader2 = csv.reader(csv_hist_data)
+                    header = next(reader2)
+                    elements = [lines for lines in reader2]
+                    track = 0
+                    for values in range(0, np.shape(elements)[0]):
+                        self.D_A_Array.append(float(elements[values][0]))
+                        track += 1
+                        # zero index corresponds to image 1
+                    # print(self.D_A_Array, track)
+
+
+    def compare_audio(self):
+        for (line, address) in enumerate(self.Image_Correlations):
+            self.load_audio(address)
+            for offset in range(0, self.D_A_Array.__len__()-self.Q_A_Array.__len__(), 20000):
+                cumulative_correlation = 0.000
+                # print(self.D_A_Array.__len__()-self.Q_A_Array.__len__())
+                db_audio_array =[]
+                for i in range(0, self.Q_A_Array.__len__()):
+                    db_audio_array.append(self.D_A_Array[offset+i])
+                # print(db_audio_array)
+                c = scipy.spatial.distance.euclidean(np.array(self.Q_A_Array), np.array(db_audio_array))
+                cumulative_correlation = c
+                print(cumulative_correlation)
 
 prep = ExtractAllMetrics()
