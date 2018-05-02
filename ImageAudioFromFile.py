@@ -43,10 +43,11 @@ class MakeAviData:
         img_name = dir_path+img_basic_name
         wav_name = dir_path+basic_name+'.wav'
         avi_name = dir_path+basic_name+'.avi'
+        mp4_name = dir_path+basic_name+'.mp4'
         subprocess.call(['ffmpeg', '-framerate', '30',
                          '-i', img_name+'%03d.png',
                          '-i', wav_name,
                          avi_name])
-
+        subprocess.call(['ffmpeg', '-i', avi_name, mp4_name])
 
 prep = MakeAviData()

@@ -10,7 +10,7 @@ class ExtractAllMetrics:
     # made a default address here.
     # change the address of this variable with selection from media player interface
 
-    Query_path = "/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/second/"
+    Query_path = "/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/Q4/"
     # change database location here
     Database_path = "/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/databse_videos/"
 
@@ -30,6 +30,7 @@ class ExtractAllMetrics:
     Q_M_Array = []
     D_M_Array = []
     min = 999
+    which  = ''
     # print(ref_array, np.count_nonzero(ref_array))
     # print(Q_B_Array[0], np.size(Q_B_Array[0]),np.count_nonzero(Q_B_Array[0]))
     Image_Correlations = ["/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/databse_videos/flowers/",
@@ -54,6 +55,7 @@ class ExtractAllMetrics:
         self.q_extract_motionvectors(self.Query_path)
         self.compare_motionvectors()
         print(self.min)
+        print(self.which)
         # print(self.Q_B_Array, self.Q_B, self.D_B_Array, self.D_B)
 
     def q_extract_hist(self, Q_dir_path):
@@ -234,7 +236,7 @@ class ExtractAllMetrics:
         for (line, address) in enumerate(self.Image_Correlations):
             self.D_M_Array = []
             self.load_motionvectors(address)
-            for offset in range(0, self.D_M_Array.__len__()-self.Q_M_Array.__len__(), 1000):
+            for offset in range(0, self.D_M_Array.__len__()-self.Q_M_Array.__len__(), 5):
                 cumulative_correlation = 0.000
                 # print(self.D_A_Array.__len__()-self.Q_A_Array.__len__())
                 db_motion_vector =[]
@@ -246,5 +248,5 @@ class ExtractAllMetrics:
                 print(cumulative_correlation)
                 if self.min>cumulative_correlation:
                     self.min = cumulative_correlation
-
+                    self.which = address
 prep = ExtractAllMetrics()
