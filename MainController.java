@@ -107,24 +107,26 @@ public class MainController implements Initializable {
 		me = new Media(new File(path).toURI().toString());
 		mp = new MediaPlayer(me);
 		mv.setMediaPlayer(mp);
-		list.sort(new SortByRank());
-		ranking.setItems(list);
+		printRank();
 	}
 	public void second(ActionEvent event) {
 		String path = new File("src/media/flowers.mp4").getAbsolutePath();
 		me = new Media(new File(path).toURI().toString());
 		mp = new MediaPlayer(me);
 		mv.setMediaPlayer(mp);
+		printRank();
 	}
 	public void query(ActionEvent event) {
 		String path = new File("src/media/interview.mp4").getAbsolutePath();
 		me = new Media(new File(path).toURI().toString());
 		mp = new MediaPlayer(me);
 		mv.setMediaPlayer(mp);
+		printRank();
 	}
 	
 	private void printRank() {
-		
+		list.sort(new SortByRank());
+		ranking.setItems(list);
 	}
 
 }
