@@ -4,8 +4,8 @@ import csv
 import os
 
 class AudioFromFiles:
-    Dir_Paths = ["/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/",
-                 "/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/databse_videos/"]
+    Dir_Paths = ["/Users/taufeqrazakh/Documents/school/CSCI_576/Project_CSCI_567/query/",
+                 "/Users/taufeqrazakh/Documents/school/CSCI_576/Project_CSCI_567/databse_videos/"]
 
     def __init__(self):
         self.GetFullAudioArray()

@@ -6,8 +6,8 @@ import math
 
 class MotionVectorsFromFiles:
 
-    Dir_Paths = ["/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/",
-     "/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/databse_videos/"]
+    Dir_Paths = ["/Users/taufeqrazakh/Documents/school/CSCI_576/Project_CSCI_567/query/",
+     "/Users/taufeqrazakh/Documents/school/CSCI_576/Project_CSCI_567/databse_videos/"]
 
     def __init__(self):
         self.GetAllMotionVectors()
@@ -79,7 +79,7 @@ class MotionVectorsFromFiles:
                 c, d = old.ravel()
                 # print(a,c,b,d)
                 file_writer.writerow([math.hypot((a-c),(b-d))])
-                mask = cv2.line(mask, (a, b), (c, d), color[i].tolist(), 2)
+                # mask = cv2.line(mask, (a, b), (c, d), color[i].tolist(), 2)
                 frame = cv2.circle(frame, (a, b), 5, color[i].tolist(), -1)
             img = cv2.add(frame, mask)
             cv2.imshow('frame', img)

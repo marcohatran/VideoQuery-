@@ -10,7 +10,7 @@ root.title("Media Player")
 root.minsize(width=500, height = 500)
 count=0
 c=0
-loc = '/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/first'
+loc = '/Users/taufeqrazakh/Documents/school/CSCI_576/Project_CSCI_567/query/first'
 QPlayB = Button(root, text = "Play")
 QPlayB.place(x = 200, y= 374)
 QPausB = Button(root, text = "Pause" )

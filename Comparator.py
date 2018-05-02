@@ -5,14 +5,16 @@ import os
 import scipy.spatial.distance
 import scipy.stats
 import librosa
+import sys
 
 class ExtractAllMetrics:
     # made a default address here.
     # change the address of this variable with selection from media player interface
 
-    Query_path = "/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/query/Q4/"
-    # change database location here
-    Database_path = "/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/databse_videos/"
+    Query_path = "/Users/taufeqrazakh/Documents/school/CSCI_576/Project_CSCI_567/query/first/"
+    Database_path = "/Users/taufeqrazakh/Documents/school/CSCI_576/Project_CSCI_567/databse_videos/"
+
+    # print(sys.argv)
 
     img_ref = cv2.imread('sample.png')
     ref_array = cv2.calcHist([img_ref], [0], None, [256], [0,256])
@@ -29,37 +31,42 @@ class ExtractAllMetrics:
 
     Q_M_Array = []
     D_M_Array = []
-    min = 999
+    min = -999
     which  = ''
     # print(ref_array, np.count_nonzero(ref_array))
     # print(Q_B_Array[0], np.size(Q_B_Array[0]),np.count_nonzero(Q_B_Array[0]))
-    Image_Correlations = ["/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/databse_videos/flowers/",
-                          "/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/databse_videos/interview/",
-                          "/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/databse_videos/movie/",
-                          "/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/databse_videos/musicvideo/",
-                          "/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/databse_videos/sports/",
-                          "/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/databse_videos/starcraft/",
-                          "/Users/taufeqrazakh/Documents/school/CSCI 576/Project_CSCI_567/databse_videos/traffic/"]
+    Image_Correlations = ["/Users/taufeqrazakh/Documents/school/CSCI_576/Project_CSCI_567/databse_videos/flowers/",
+                          "/Users/taufeqrazakh/Documents/school/CSCI_576/Project_CSCI_567/databse_videos/interview/",
+                          "/Users/taufeqrazakh/Documents/school/CSCI_576/Project_CSCI_567/databse_videos/movie/",
+                          "/Users/taufeqrazakh/Documents/school/CSCI_576/Project_CSCI_567/databse_videos/musicvideo/",
+                          "/Users/taufeqrazakh/Documents/school/CSCI_576/Project_CSCI_567/databse_videos/sports/",
+                          "/Users/taufeqrazakh/Documents/school/CSCI_576/Project_CSCI_567/databse_videos/starcraft/",
+                          "/Users/taufeqrazakh/Documents/school/CSCI_576/Project_CSCI_567/databse_videos/traffic/"]
 
     correlation = 0
     start_index = 0
     # print(Image_Correlations[0][0])
 
     def __init__(self):
+        self.Query_path = str(sys.argv[1])
+        print(self.Query_path)
         print('starting a pyclass')
-        # self.q_extract_hist(self.Query_path)
-        # self.compare_hist()
-        # self.q_extract_audio(self.Query_path)
-        # self.compare_audio()
+        self.q_extract_hist(self.Query_path)
+        self.compare_hist()
+        print(self.min)
+        print(self.which)
+        self.min = 999
+        self.q_extract_audio(self.Query_path)
+        self.compare_audio()
         # print(self.min)
-        self.q_extract_motionvectors(self.Query_path)
-        self.compare_motionvectors()
+        # self.q_extract_motionvectors(self.Query_path)
+        # self.compare_motionvectors()
         print(self.min)
         print(self.which)
         # print(self.Q_B_Array, self.Q_B, self.D_B_Array, self.D_B)
 
     def q_extract_hist(self, Q_dir_path):
-        print(Q_dir_path)
+        # print(Q_dir_path)
         # extracting histogram data from all queries
         for file in os.listdir(Q_dir_path):
             if 'Hist.csv' in file:
@@ -127,14 +134,14 @@ class ExtractAllMetrics:
                     cumulative_correlation += c
                     # print(c)
                 cumulative_correlation = cumulative_correlation/150
-                print(cumulative_correlation)
-                # if cumulative_correlation>=correlation:
-                #     Image_Correlations[line][1] = cumulative_correlation
-                #     Image_Correlations[line][2] = offset
+                # print(cumulative_correlation)
+                if self.min<cumulative_correlation and cumulative_correlation>=0:
+                    self.min = cumulative_correlation
+                    self.which = address
 
 
     def q_extract_audio(self, Q_dir_path):
-        print(Q_dir_path)
+        # print(Q_dir_path)
         # extracting audio data from given queries
         for file in os.listdir(Q_dir_path):
             if 'AudioArray.csv' in file:
@@ -175,7 +182,7 @@ class ExtractAllMetrics:
         for (line, address) in enumerate(self.Image_Correlations):
             self.D_A_Array = []
             self.load_audio(address)
-            for offset in range(0, (self.D_A_Array.__len__()-self.Q_A_Array.__len__()), 20000):
+            for offset in range(0, (self.D_A_Array.__len__()-self.Q_A_Array.__len__()), 5000):
                 # print(self.D_A_Array.__len__()-self.Q_A_Array.__len__())
                 db_audio_array =[]
                 for i in range(0, self.Q_A_Array.__len__()):
@@ -192,9 +199,10 @@ class ExtractAllMetrics:
                 # c = scipy.stats.pearsonr(np.array(self.Q_A_Array), np.array(db_audio_array))
                 c = scipy.spatial.distance.euclidean(chroma1,chroma2)
                 cumulative_correlation = c
-                print(cumulative_correlation)
+                # print(cumulative_correlation)
                 if self.min>cumulative_correlation:
                     self.min = cumulative_correlation
+                    self.which = address
 
 
     def q_extract_motionvectors(self, Q_dir_path):
@@ -245,7 +253,7 @@ class ExtractAllMetrics:
                 # print(db_audio_array)
                 c = scipy.spatial.distance.euclidean(np.array(self.Q_M_Array), np.array(db_motion_vector))
                 cumulative_correlation = c
-                print(cumulative_correlation)
+                # print(cumulative_correlation)
                 if self.min>cumulative_correlation:
                     self.min = cumulative_correlation
                     self.which = address
