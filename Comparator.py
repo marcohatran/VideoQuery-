@@ -6,7 +6,10 @@ import scipy.spatial.distance
 import scipy.stats
 import librosa
 import sys
-import math
+import matplotlib.pyplot as plt
+import time
+from scipy.interpolate import spline
+
 
 class ExtractAllMetrics:
     # made a default address here.
@@ -85,6 +88,7 @@ class ExtractAllMetrics:
         # print(self.min)
         # print(self.which)
         # print(self.Q_B_Array, self.Q_B, self.D_B_Array, self.D_B)
+        self.plt_graphs()
 
     def q_extract_hist(self, Q_dir_path):
         # print(Q_dir_path)
@@ -143,8 +147,8 @@ class ExtractAllMetrics:
             self.load_hist(address)
             local_min = -999
             # print(D_B_Array,'\n',ref_array)
+            temp_full_array =[]
             for offset in range (0, 450, 2):
-                temp_hist_array = []
                 cumulative_correlation = 0.000
                 for i in range (0,150):
                     # self.transformations(i, offset)
@@ -155,19 +159,19 @@ class ExtractAllMetrics:
                     c3 = scipy.stats.pearsonr(np.ndarray.flatten(self.Q_R_Array[i]), np.ndarray.flatten(self.D_R_Array[i+offset]))
                     c = float((c1[0]+c2[0]+c3[0])/3)
                     cumulative_correlation += c
-                    temp_hist_array.append(c)
                     # print(c)
                 cumulative_correlation = cumulative_correlation/150
                 # print(cumulative_correlation)
-
+                temp_full_array.append(cumulative_correlation)
                 if local_min<cumulative_correlation and cumulative_correlation>=0:
                     local_min = cumulative_correlation
                     # self.which = address
                     if(local_min>self.min):
                         self.hist_start_index = offset
                         self.min = local_min
-                        self.hist_graph_array = temp_hist_array
             self.hist_correlations.append(local_min)
+            if(local_min == self.min):
+                self.hist_graph_array = temp_full_array
         self.hist_correlation = self.min
 
     def q_extract_audio(self, Q_dir_path):
@@ -215,7 +219,6 @@ class ExtractAllMetrics:
             self.load_audio(address)
             local_min = 99998
             for offset in range(0, (self.D_A_Array.__len__()-self.Q_A_Array.__len__()), 5000):
-                # print(self.D_A_Array.__len__()-self.Q_A_Array.__len__())
                 db_audio_array =[]
                 for i in range(0, self.Q_A_Array.__len__()):
                     db_audio_array.append(self.D_A_Array[offset+i])
@@ -226,13 +229,9 @@ class ExtractAllMetrics:
                 np.resize(load2, (load2.__len__(), 1))
                 chroma1 = librosa.feature.rmse(y=load1)
                 chroma2 = librosa.feature.rmse(y=load2)
-                # print(np.size(chroma2),np.size(chroma1))
-                # print(chroma1,chroma2)
-                # c = scipy.stats.pearsonr(np.array(self.Q_A_Array), np.array(db_audio_array))
                 c = scipy.spatial.distance.euclidean(chroma1,chroma2)
                 cumulative_correlation = c
                 temp_audio_array.append(cumulative_correlation)
-                # print(cumulative_correlation)
 
                 if local_min > cumulative_correlation:
                     local_min = cumulative_correlation
@@ -242,6 +241,8 @@ class ExtractAllMetrics:
                 self.min = local_min
                 self.audio_graph_array = temp_audio_array
             self.audio_correlations.append(local_min)
+            if(self.min == local_min):
+                self.audio_graph_array = temp_audio_array
         self.audio_correlation = self.min
         self.normalize_audio()
 
@@ -308,12 +309,14 @@ class ExtractAllMetrics:
     def print_java_csv(self):
         file_writer_boss = csv.writer(open('results.csv', 'w'), delimiter=',', quoting=csv.QUOTE_MINIMAL)
         file_writer_boss.writerow(["histogram"])
-        file_writer_boss.writerow([self.hist_correlation,self.hist_start_index])
+        file_writer_boss.writerow([self.hist_correlation])
+        file_writer_boss.writerow([self.hist_start_index])
         file_writer_boss.writerow(["hist_arr"])
         for i in range(0,self.hist_correlations.__len__()):
             file_writer_boss.writerow([self.hist_correlations[i]])
         file_writer_boss.writerow(["aduio"])
-        file_writer_boss.writerow([self.audio_correlation,self.audio_start_index])
+        file_writer_boss.writerow([self.audio_correlation])
+        file_writer_boss.writerow([self.audio_start_index])
         file_writer_boss.writerow(["aud_arr"])
         for i in range(0, self.audio_correlations.__len__()):
             file_writer_boss.writerow([self.audio_correlations[i]])
@@ -324,7 +327,29 @@ class ExtractAllMetrics:
         for i in range(0, self.audio_graph_array.__len__()):
             file_writer_boss.writerow([self.audio_graph_array[i]])
 
+    def plt_graphs(self):
+        x = []
+        number = 0
+        for i in range(0, self.hist_graph_array.__len__()):
+            x.append(number)
+            number = number + 2
 
+        x_aud = []
+        for i in range(0, self.audio_graph_array.__len__()):
+            x_aud.append(i * round(450/self.audio_graph_array.__len__()))
+        print(self.hist_graph_array.__len__())
+        print(self.audio_graph_array.__len__())
+        print(x_aud.__len__())
 
+        plt.plot(x,self.hist_graph_array, label = "Historgram", c='b', alpha=0.8)
+        plt.plot(x_aud, self.audio_graph_array, label="Audio", c='r', alpha=0.8)
+        plt.xlabel('Frame')
+        # naming the y axis
+        plt.ylabel('Percent Match')
+        # giving a title to my graph
+        plt.title('Correlation')
+        plt.legend()
+        plt.savefig("CorrelationData.png")
+        plt.show()
 
 prep = ExtractAllMetrics()

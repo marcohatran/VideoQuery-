@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.media.MediaView?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
+   <bottom>
+      <HBox fx:id="audio" alignment="CENTER" prefHeight="120.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button mnemonicParsing="false" onAction="#play" text="play" />
+            <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="15.0" />
+            <Button mnemonicParsing="false" onAction="#pause" text="pause" />
+            <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="15.0" />
+            <Button mnemonicParsing="false" onAction="#fast" text="fast" />
+            <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="15.0" />
+            <Button mnemonicParsing="false" onAction="#slow" text="slow" />
+            <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="15.0" />
+            <Button mnemonicParsing="false" onAction="#reload" text="reload" />
+            <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="15.0" />
+            <Button mnemonicParsing="false" onAction="#start" text="start" />
+            <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="15.0" />
+            <Button mnemonicParsing="false" onAction="#last" text="Audio Sort" />
+         </children>
+      </HBox>
+   </bottom>
+   <top>
+      <HBox alignment="CENTER" prefHeight="110.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="first" mnemonicParsing="false" onAction="#first" text="First">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font></Button>
+            <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="20.0" />
+            <Button fx:id="second" mnemonicParsing="false" onAction="#second" text="Second" />
+            <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="20.0" />
+            <Button fx:id="query" mnemonicParsing="false" onAction="#q3" text="q3" />
+            <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="20.0" />
+            <Button fx:id="query1" mnemonicParsing="false" onAction="#q4" text="q4" />
+            <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="20.0" />
+            <Button fx:id="query2" mnemonicParsing="false" onAction="#q5" text="q5" />
+            <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="20.0" />
+            <Button fx:id="query3" mnemonicParsing="false" onAction="#hq1" text="hq1" />
+            <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="20.0" />
+            <Button fx:id="query4" mnemonicParsing="false" onAction="#hq2" text="hq2" />
+            <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="20.0" />
+            <Button fx:id="query5" mnemonicParsing="false" onAction="#hq4" text="hq4" />
+            <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="20.0" />
+            <Button fx:id="query51" mnemonicParsing="false" onAction="#getResults" text="RESULTS" />
+         </children>
+      </HBox>
+   </top>
+   <center>
+      <VBox prefHeight="600.0" prefWidth="950.0" BorderPane.alignment="CENTER">
+         <children>
+            <Separator opacity="0.0" prefHeight="70.0" prefWidth="800.0" />
+            <HBox alignment="CENTER" prefHeight="289.0" prefWidth="800.0">
+               <children>
+                  <MediaView id="mv" fx:id="mv" fitHeight="288.0" fitWidth="352.0" />
+                  <Separator orientation="VERTICAL" prefHeight="200.0" prefWidth="50.0" />
+                  <MediaView fx:id="mv2" fitHeight="288.0" fitWidth="352.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="120.0" prefWidth="800.0">
+               <children>
+                  <ImageView fx:id="imageGraph" fitHeight="150.0" fitWidth="392.0" pickOnBounds="true" preserveRatio="true" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </center>
+   <left>
+      <Separator opacity="0.0" orientation="VERTICAL" prefHeight="600.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+   </left>
+   <right>
+      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Separator opacity="0.0" orientation="VERTICAL" prefHeight="570.0" prefWidth="25.0" />
+            <TableView fx:id="ranking" prefHeight="200.0" prefWidth="200.0">
+              <columns>
+                <TableColumn fx:id="rank" prefWidth="60.0" text="Rank" />
+                  <TableColumn fx:id="name" prefWidth="100.0" text="Name" />
+              </columns>
+            </TableView>
+            <Separator opacity="0.0" orientation="VERTICAL" prefHeight="570.0" prefWidth="75.0" />
+         </children>
+      </HBox>
+   </right>
+</BorderPane>
