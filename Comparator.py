@@ -6,13 +6,15 @@ import scipy.spatial.distance
 import scipy.stats
 import librosa
 import sys
+import math
 
 class ExtractAllMetrics:
     # made a default address here.
     # change the address of this variable with selection from media player interface
 
     Query_path = "/Users/taufeqrazakh/Documents/school/CSCI_576/Project_CSCI_567/query/first/"
-    Database_path = "/Users/taufeqrazakh/Documents/school/CSCI_576/Project_CSCI_567/databse_videos/"
+
+
 
     # print(sys.argv)
 
@@ -31,6 +33,7 @@ class ExtractAllMetrics:
 
     Q_M_Array = []
     D_M_Array = []
+
     min = -999
     which  = ''
     # print(ref_array, np.count_nonzero(ref_array))
@@ -43,9 +46,21 @@ class ExtractAllMetrics:
                           "/Users/taufeqrazakh/Documents/school/CSCI_576/Project_CSCI_567/databse_videos/starcraft/",
                           "/Users/taufeqrazakh/Documents/school/CSCI_576/Project_CSCI_567/databse_videos/traffic/"]
 
-    correlation = 0
-    start_index = 0
+
+    hist_correlation = 0
+    hist_start_index = 0
+    audio_correlation = 0
+    audio_start_index = 0
+    mv_correlation = 0
+    mv_start_index = 0
     # print(Image_Correlations[0][0])
+    hist_correlations=[]
+    motionvector_correlations = []
+    audio_correlations = []
+    hist_graph_array = []
+    audio_graph_array =[]
+    motionvector_graph_array =[]
+
 
     def __init__(self):
         self.Query_path = str(sys.argv[1])
@@ -53,16 +68,22 @@ class ExtractAllMetrics:
         print('starting a pyclass')
         self.q_extract_hist(self.Query_path)
         self.compare_hist()
-        print(self.min)
-        print(self.which)
+        # print(self.hist_start_index)
+        # print(self.min)
+        # print(self.hist_correlations)
+        # print(self.hist_graph_array)
         self.min = 999
         self.q_extract_audio(self.Query_path)
         self.compare_audio()
-        # print(self.min)
+
+        self.print_java_csv()
+        # print(self.min, self.audio_correlation)
+        # print(self.audio_correlations)
+        # print(self.audio_graph_array)
         # self.q_extract_motionvectors(self.Query_path)
         # self.compare_motionvectors()
-        print(self.min)
-        print(self.which)
+        # print(self.min)
+        # print(self.which)
         # print(self.Q_B_Array, self.Q_B, self.D_B_Array, self.D_B)
 
     def q_extract_hist(self, Q_dir_path):
@@ -120,8 +141,10 @@ class ExtractAllMetrics:
         # print(np.shape(Q_B_Array))
         for (line, address) in enumerate(self.Image_Correlations):
             self.load_hist(address)
+            local_min = -999
             # print(D_B_Array,'\n',ref_array)
             for offset in range (0, 450, 2):
+                temp_hist_array = []
                 cumulative_correlation = 0.000
                 for i in range (0,150):
                     # self.transformations(i, offset)
@@ -132,13 +155,20 @@ class ExtractAllMetrics:
                     c3 = scipy.stats.pearsonr(np.ndarray.flatten(self.Q_R_Array[i]), np.ndarray.flatten(self.D_R_Array[i+offset]))
                     c = float((c1[0]+c2[0]+c3[0])/3)
                     cumulative_correlation += c
+                    temp_hist_array.append(c)
                     # print(c)
                 cumulative_correlation = cumulative_correlation/150
                 # print(cumulative_correlation)
-                if self.min<cumulative_correlation and cumulative_correlation>=0:
-                    self.min = cumulative_correlation
-                    self.which = address
 
+                if local_min<cumulative_correlation and cumulative_correlation>=0:
+                    local_min = cumulative_correlation
+                    # self.which = address
+                    if(local_min>self.min):
+                        self.hist_start_index = offset
+                        self.min = local_min
+                        self.hist_graph_array = temp_hist_array
+            self.hist_correlations.append(local_min)
+        self.hist_correlation = self.min
 
     def q_extract_audio(self, Q_dir_path):
         # print(Q_dir_path)
@@ -181,7 +211,9 @@ class ExtractAllMetrics:
     def compare_audio(self):
         for (line, address) in enumerate(self.Image_Correlations):
             self.D_A_Array = []
+            temp_audio_array = []
             self.load_audio(address)
+            local_min = 99998
             for offset in range(0, (self.D_A_Array.__len__()-self.Q_A_Array.__len__()), 5000):
                 # print(self.D_A_Array.__len__()-self.Q_A_Array.__len__())
                 db_audio_array =[]
@@ -199,11 +231,19 @@ class ExtractAllMetrics:
                 # c = scipy.stats.pearsonr(np.array(self.Q_A_Array), np.array(db_audio_array))
                 c = scipy.spatial.distance.euclidean(chroma1,chroma2)
                 cumulative_correlation = c
+                temp_audio_array.append(cumulative_correlation)
                 # print(cumulative_correlation)
-                if self.min>cumulative_correlation:
-                    self.min = cumulative_correlation
-                    self.which = address
 
+                if local_min > cumulative_correlation:
+                    local_min = cumulative_correlation
+                    # self.which = address
+            if (local_min < self.min):
+                        # self.audio_start_index = offset
+                self.min = local_min
+                self.audio_graph_array = temp_audio_array
+            self.audio_correlations.append(local_min)
+        self.audio_correlation = self.min
+        self.normalize_audio()
 
     def q_extract_motionvectors(self, Q_dir_path):
         print(Q_dir_path)
@@ -257,4 +297,34 @@ class ExtractAllMetrics:
                 if self.min>cumulative_correlation:
                     self.min = cumulative_correlation
                     self.which = address
+
+
+    def normalize_audio(self):
+        tmpMax = max(self.audio_graph_array)
+        for value in range (0,self.audio_graph_array.__len__()):
+            self.audio_graph_array[value] = 1 - (self.audio_graph_array[value] / tmpMax)
+
+
+    def print_java_csv(self):
+        file_writer_boss = csv.writer(open('results.csv', 'w'), delimiter=',', quoting=csv.QUOTE_MINIMAL)
+        file_writer_boss.writerow(["histogram"])
+        file_writer_boss.writerow([self.hist_correlation,self.hist_start_index])
+        file_writer_boss.writerow(["hist_arr"])
+        for i in range(0,self.hist_correlations.__len__()):
+            file_writer_boss.writerow([self.hist_correlations[i]])
+        file_writer_boss.writerow(["aduio"])
+        file_writer_boss.writerow([self.audio_correlation,self.audio_start_index])
+        file_writer_boss.writerow(["aud_arr"])
+        for i in range(0, self.audio_correlations.__len__()):
+            file_writer_boss.writerow([self.audio_correlations[i]])
+        file_writer_boss.writerow(["hist_graph_arr"])
+        for i in range(0,self.hist_graph_array.__len__()):
+            file_writer_boss.writerow([self.hist_graph_array[i]])
+        file_writer_boss.writerow(["audio_graph_arr"])
+        for i in range(0, self.audio_graph_array.__len__()):
+            file_writer_boss.writerow([self.audio_graph_array[i]])
+
+
+
+
 prep = ExtractAllMetrics()
