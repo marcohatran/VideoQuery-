@@ -36,6 +36,8 @@ class ExtractAllMetrics:
 
     Q_M_Array = []
     D_M_Array = []
+    Q_M2_Array = []
+    D_M2_Array = []
 
     min = -999
     which  = ''
@@ -71,23 +73,20 @@ class ExtractAllMetrics:
         print('starting a pyclass')
         self.q_extract_hist(self.Query_path)
         self.compare_hist()
-        # print(self.hist_start_index)
-        # print(self.min)
-        # print(self.hist_correlations)
-        # print(self.hist_graph_array)
         self.min = 999
         self.q_extract_audio(self.Query_path)
         self.compare_audio()
 
+
+        self.min = -999
+        self.q_extract_motionvectors(self.Query_path)
+        self.compare_motionvectors()
         self.print_java_csv()
-        # print(self.min, self.audio_correlation)
-        # print(self.audio_correlations)
-        # print(self.audio_graph_array)
-        # self.q_extract_motionvectors(self.Query_path)
-        # self.compare_motionvectors()
         # print(self.min)
         # print(self.which)
         # print(self.Q_B_Array, self.Q_B, self.D_B_Array, self.D_B)
+
+
         self.plt_graphs()
 
     def q_extract_hist(self, Q_dir_path):
@@ -261,6 +260,7 @@ class ExtractAllMetrics:
                     # print(np.size(elements), np.shape(elements)[0])
                     for values in range(0, np.shape(elements)[0]):
                         self.Q_M_Array.append(float(elements[values][0]))
+                        self.Q_M2_Array.append(float(elements[values][1]))
                         track += 1
                     # print(self.Q_M_Array, track)
 
@@ -276,6 +276,7 @@ class ExtractAllMetrics:
                     track = 0
                     for values in range(0, np.shape(elements)[0]):
                         self.D_M_Array.append(float(elements[values][0]))
+                        self.D_M2_Array.append(float(elements[values][1]))
                         track += 1
                         # zero index corresponds to image 1
                     # print(self.D_A_Array, track)
@@ -284,21 +285,31 @@ class ExtractAllMetrics:
     def compare_motionvectors(self):
         for (line, address) in enumerate(self.Image_Correlations):
             self.D_M_Array = []
+            self.D_M2_Array = []
+            local_mv_min=-999
             self.load_motionvectors(address)
+            temp_mv = []
             for offset in range(0, self.D_M_Array.__len__()-self.Q_M_Array.__len__(), 5):
                 cumulative_correlation = 0.000
                 # print(self.D_A_Array.__len__()-self.Q_A_Array.__len__())
                 db_motion_vector =[]
+                db_motion_vector2 = []
                 for i in range(0, self.Q_M_Array.__len__()):
                     db_motion_vector.append(self.D_M_Array[offset+i])
+                    db_motion_vector2.append(self.D_M2_Array[offset+i])
                 # print(db_audio_array)
-                c = scipy.spatial.distance.euclidean(np.array(self.Q_M_Array), np.array(db_motion_vector))
-                cumulative_correlation = c
+                c = scipy.stats.pearsonr(np.array(self.Q_M_Array), np.array(db_motion_vector))
+                c2 = scipy.stats.pearsonr(np.array(self.Q_M2_Array), np.array(db_motion_vector2))
+                cumulative_correlation = (  c[0]+c2[0] )/2
+                if local_mv_min<cumulative_correlation :
+                    local_mv_min = cumulative_correlation
                 # print(cumulative_correlation)
-                if self.min>cumulative_correlation:
-                    self.min = cumulative_correlation
-                    self.which = address
-
+                temp_mv.append(cumulative_correlation)
+            self.motionvector_correlations.append(local_mv_min)
+            if local_mv_min>self.min:
+                self.min = local_mv_min
+                self.motionvector_graph_array = temp_mv
+        mv_correlation = self.min
 
     def normalize_audio(self):
         tmpMax = max(self.audio_graph_array)
@@ -320,6 +331,12 @@ class ExtractAllMetrics:
         file_writer_boss.writerow(["aud_arr"])
         for i in range(0, self.audio_correlations.__len__()):
             file_writer_boss.writerow([self.audio_correlations[i]])
+        file_writer_boss.writerow(["MotionVector"])
+        file_writer_boss.writerow([self.mv_correlation])
+        file_writer_boss.writerow(["0"])
+        file_writer_boss.writerow(["Mv_arr"])
+        for i in range(0, self.motionvector_correlations.__len__()):
+            file_writer_boss.writerow([self.motionvector_correlations[i]])
         file_writer_boss.writerow(["hist_graph_arr"])
         for i in range(0,self.hist_graph_array.__len__()):
             file_writer_boss.writerow([self.hist_graph_array[i]])
@@ -339,10 +356,16 @@ class ExtractAllMetrics:
             x_aud.append(i * round(450/self.audio_graph_array.__len__()))
         print(self.hist_graph_array.__len__())
         print(self.audio_graph_array.__len__())
-        print(x_aud.__len__())
+        print(self.motionvector_graph_array.__len__())
 
-        plt.plot(x,self.hist_graph_array, label = "Historgram", c='b', alpha=0.8)
+
+        x_mv = []
+        for i in range(0,self.motionvector_graph_array.__len__()):
+            x_mv.append(i * 450/self.motionvector_graph_array.__len__())
+
+        plt.plot(x, self.hist_graph_array, label="Historgram", c='b', alpha=0.8)
         plt.plot(x_aud, self.audio_graph_array, label="Audio", c='r', alpha=0.8)
+        plt.plot(x_mv, self.motionvector_graph_array, label="Motion Vector", c='g', alpha=0.8)
         plt.xlabel('Frame')
         # naming the y axis
         plt.ylabel('Percent Match')

@@ -19,15 +19,17 @@
             <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="15.0" />
             <Button mnemonicParsing="false" onAction="#pause" text="pause" />
             <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="15.0" />
-            <Button mnemonicParsing="false" onAction="#fast" text="fast" />
+            <Button mnemonicParsing="false" onAction="#fast" text="play 1" />
             <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="15.0" />
-            <Button mnemonicParsing="false" onAction="#slow" text="slow" />
+            <Button mnemonicParsing="false" onAction="#slow" text="fast 2" />
             <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="15.0" />
-            <Button mnemonicParsing="false" onAction="#reload" text="reload" />
+            <Button mnemonicParsing="false" onAction="#reload" text="play 2" />
             <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="15.0" />
             <Button mnemonicParsing="false" onAction="#start" text="start" />
             <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="15.0" />
             <Button mnemonicParsing="false" onAction="#last" text="Audio Sort" />
+            <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="15.0" />
+            <Button mnemonicParsing="false" onAction="#last2" text="MV Sort" />
          </children>
       </HBox>
    </bottom>
@@ -54,6 +56,8 @@
             <Button fx:id="query5" mnemonicParsing="false" onAction="#hq4" text="hq4" />
             <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="20.0" />
             <Button fx:id="query51" mnemonicParsing="false" onAction="#getResults" text="RESULTS" />
+            <Separator opacity="0.0" orientation="VERTICAL" prefHeight="100.0" prefWidth="20.0" />
+            <Button fx:id="query52" mnemonicParsing="false" onAction="#query" text="hq4" />
          </children>
       </HBox>
    </top>

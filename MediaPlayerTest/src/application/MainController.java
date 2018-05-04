@@ -60,6 +60,7 @@ public class MainController implements Initializable {
 	String[] vidNames = {"flowers", "interview", "movie", "musicvideo", "sports", "starcraft", "traffic"};
 	double [] hist_vids_ranking = new double[7];
 	double [] audio_vids_ranking = new double[7];
+	double [] mv_vids_ranking = new double[7];
 	private int vidIndex;					// Index for DB video start
 	
 	
@@ -122,17 +123,17 @@ public class MainController implements Initializable {
 		mp2.pause();
 	}
 	public void fast(ActionEvent event) {
-		mp.setRate(2);
-		mp2.setRate(2);
+		mp.setRate(1);
+		mp.play();
 	}
 	public void slow(ActionEvent event) {
-		mp.setRate(.5);
-		mp2.setRate(.5);
+		//mp.setRate(.5);
+		mp2.setRate(2);
+		mp2.play();
 	}
 	public void reload(ActionEvent event) {
-		mp.seek(mp.getStartTime());
-		mp2.seek(mp2.getStartTime());
-		mp.play();
+		
+		mp2.setRate(1);
 		mp2.play();
 	}
 	public void start(ActionEvent event) {
@@ -144,12 +145,12 @@ public class MainController implements Initializable {
 	
 	// ACTUALLY DOES AUDIO SORT NOW --- DO NOT CHANGE
 	public void last(ActionEvent event) {
-		/*mp.stop();
-		mp2.stop();
-		mp.seek(mp.getTotalDuration());		
-		mp2.seek(mp2.getTotalDuration());*/
 		createAudioRankings();
 		printRankAudio();
+	}
+	public void last2(ActionEvent event) {
+		createMVRankings();
+		printRank();
 	}
 	public void first(ActionEvent event) {
 		pythonQuery (1);
@@ -165,7 +166,7 @@ public class MainController implements Initializable {
 		me = new Media(new File(qPathStub + "second/second.mp4").toURI().toString());
 		mp = new MediaPlayer(me);
 		mv.setMediaPlayer(mp);
-		printRank();
+		//printRank();
 	}
 	public void q3(ActionEvent event) {
 		pythonQuery (3);
@@ -173,7 +174,7 @@ public class MainController implements Initializable {
 		me = new Media(new File(qPathStub + "Q3/q3.mp4").toURI().toString());
 		mp = new MediaPlayer(me);
 		mv.setMediaPlayer(mp);
-		printRank();
+		//printRank();
 	}
 	public void q4(ActionEvent event) {
 		pythonQuery (4);
@@ -181,7 +182,7 @@ public class MainController implements Initializable {
 		me = new Media(new File(qPathStub + "Q4/q4.mp4").toURI().toString());
 		mp = new MediaPlayer(me);
 		mv.setMediaPlayer(mp);
-		printRank();
+		//printRank();
 	}
 	public void q5(ActionEvent event) {
 		pythonQuery (5);
@@ -189,7 +190,7 @@ public class MainController implements Initializable {
 		me = new Media(new File(qPathStub + "Q5/q5.mp4").toURI().toString());
 		mp = new MediaPlayer(me);
 		mv.setMediaPlayer(mp);
-		printRank();
+		//printRank();
 	}
 	public void hq1(ActionEvent event) {
 		pythonQuery (6);
@@ -197,7 +198,7 @@ public class MainController implements Initializable {
 		me = new Media(new File(qPathStub + "HQ1/hq1.mp4").toURI().toString());
 		mp = new MediaPlayer(me);
 		mv.setMediaPlayer(mp);
-		printRank();
+		//printRank();
 	}
 	public void hq2(ActionEvent event) {
 		pythonQuery (7);
@@ -205,7 +206,7 @@ public class MainController implements Initializable {
 		me = new Media(new File(qPathStub + "HQ2/hq2.mp4").toURI().toString());
 		mp = new MediaPlayer(me);
 		mv.setMediaPlayer(mp);
-		printRank();
+		//printRank();
 	}
 	public void hq4(ActionEvent event) {
 		pythonQuery (8);
@@ -213,15 +214,15 @@ public class MainController implements Initializable {
 		me = new Media(new File(qPathStub + "HQ4/hq4.mp4").toURI().toString());
 		mp = new MediaPlayer(me);
 		mv.setMediaPlayer(mp);
-		printRank();
+		//printRank();
 	}
 	public void query(ActionEvent event) {
 		pythonQuery (9);
 //		String path = new File(qPathStub + "HQ3/hq3.mp4").getAbsolutePath();
-		me = new Media(new File(qPathStub + "HQ3/hq3.mp4").toURI().toString());
+		me = new Media(new File(qPathStub + "Q6/q6.mp4").toURI().toString());
 		mp = new MediaPlayer(me);
 		mv.setMediaPlayer(mp);
-		printRank();
+		//printRank();
 	}
 	
 	
@@ -231,15 +232,16 @@ public class MainController implements Initializable {
 	
 	public void dbVidLoader() {
 		String dbVidName = list.get(0).getName() + "/" + list.get(0).getName() + ".mp4";
-		long msSeek = (vidIndex / 600) * 20 *1000;
+		double msSeek = ((double)vidIndex / 600) * 20;
 		me2 = new Media(new File(dbPathStub+dbVidName).toURI().toString());
 		mp2 = new MediaPlayer(me2);
 		mv2.setMediaPlayer(mp2);
-		mp2.setStopTime(Duration.seconds(20));
-		mp2.pause();
-		mp2.setStartTime(Duration.millis(msSeek));
-		System.out.println(mp2.getStartTime());
-		mp2.seek(mp2.getStartTime().add(Duration.millis(msSeek)));
+		System.out.println("Best Time Match: " + msSeek + " Seconds");
+//		mp2.setStopTime(Duration.seconds(20));
+//		mp2.pause();
+//		mp2.setStartTime(Duration.millis(msSeek));
+		//System.out.println(mp2.getStartTime());
+//		mp2.seek(mp2.getStartTime().add(Duration.millis(msSeek)));
 //		mp2.setStopTime(Duration.millis(13000));
 //		mp2.setStartTime(Duration.seconds(3));
 
@@ -272,12 +274,17 @@ public class MainController implements Initializable {
 	        while(scanner.hasNext()){
 	            if (loopIndex == 3) {
 	            	vidIndex = Integer.parseInt(scanner.nextLine());
+	            	System.out.println("Best frame match: " + vidIndex);
 	            }
 	            else if (loopIndex >= 5 && loopIndex <= 11) {
 	            	hist_vids_ranking[loopIndex - 5] = Double.parseDouble(scanner.nextLine());
 	            }
 	            else if (loopIndex >= 16 && loopIndex <= 22) {
 	            	audio_vids_ranking[loopIndex - 16] = Double.parseDouble(scanner.nextLine());
+//	            	System.out.println(scanner.nextLine());
+	            }
+	            else if (loopIndex >= 27 && loopIndex <= 33) {
+	            	mv_vids_ranking[loopIndex - 27] = Double.parseDouble(scanner.nextLine());
 //	            	System.out.println(scanner.nextLine());
 	            }
 	            else {
@@ -310,6 +317,12 @@ public class MainController implements Initializable {
 			list.add(new Ranking(audio_vids_ranking [i], vidNames[i]));
 		}
 	}
+	private void createMVRankings() {
+		list = FXCollections.observableArrayList();
+		for (int i = 0; i < mv_vids_ranking.length; i ++) {
+			list.add(new Ranking(mv_vids_ranking [i], vidNames[i]));
+		}
+	}
 	
 	
 	
@@ -339,12 +352,15 @@ public class MainController implements Initializable {
 		else if (qNum == 8) {
 			query = query + "HQ4/";
 		}
-		/*
+		
 		else if (qNum == 9) {
-			query = query + "HQ4/";
+			query = query + "Q6/";
+		}
+		else if (qNum == 10) {
+			query = query + "Q6/";
 		}
 		
-		 * ADD FOR NEW FILE
+		 /* ADD FOR NEW FILE
 		 * else if (qNum == 9) {
 			query = query + "HQ4/";
 		}*/

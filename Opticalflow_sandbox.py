@@ -78,7 +78,7 @@ class MotionVectorsFromFiles:
                 a, b = new.ravel()
                 c, d = old.ravel()
                 # print(a,c,b,d)
-                file_writer.writerow([math.hypot((a-c),(b-d))])
+                file_writer.writerow([(a-c),(b-d),math.hypot((a-c),(b-d))])
                 # mask = cv2.line(mask, (a, b), (c, d), color[i].tolist(), 2)
                 frame = cv2.circle(frame, (a, b), 5, color[i].tolist(), -1)
             img = cv2.add(frame, mask)
